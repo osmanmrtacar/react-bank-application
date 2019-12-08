@@ -11,7 +11,7 @@ import {
 } from "react-native";
 
 import Modal from "react-native-modal";
-
+import GmailStyleSwipeableRow from "../SwipableRows/GmailStyleSwipeableRow";
 import { RectButton } from "react-native-gesture-handler";
 
 import Swipeable from "react-native-gesture-handler/Swipeable";
@@ -20,7 +20,7 @@ const { API } = require("../../../config");
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 
-export default class GmailStyleSwipeableRow extends Component {
+export default class AccountsGmailStyleRow extends Component {
   constructor(props) {
     super(props);
   }
@@ -73,7 +73,7 @@ export default class GmailStyleSwipeableRow extends Component {
     return (
       <RectButton
         style={styles.rightAction}
-        onPress={() => this._deleteAccount(this.props.deneme.EkNo)}
+        onPress={() => this._deleteAccount(this.props.children.props.item.EkNo)}
       >
         <AnimatedIcon
           name="delete-forever"
@@ -91,59 +91,6 @@ export default class GmailStyleSwipeableRow extends Component {
     this._swipeableRow.close();
   };
 
-  _deleteAccount = async accountId => {
-    try {
-      const response = await fetch(`${API}/api/account/deleteAccount`, {
-        method: "POST",
-        headers: {
-          token: await AsyncStorage.getItem("token"),
-          "Content-Type": "application/json;charset=utf-8"
-        },
-        body: JSON.stringify({ ekNo: accountId })
-      });
-      const json = await response.json();
-      await this.props.fetchToggle();
-      alert(json.message);
-    } catch (err) {
-      alert(err);
-    }
-  };
-
-  _putMoney = async accountId => {
-    try {
-      const response = await fetch(`${API}/api/account/selectAccount`, {
-        method: "POST",
-        headers: {
-          token: await AsyncStorage.getItem("token"),
-          "Content-Type": "application/json;charset=utf-8"
-        },
-        body: JSON.stringify({ Quantity: this.state.Quantity, ekNo: accountId })
-      });
-      const json = await response.json();
-      this.props.fetchToggle();
-      alert(json.message);
-    } catch (err) {
-      alert(err);
-    }
-  };
-
-  _getMoney = async accountId => {
-    try {
-      const response = await fetch(`${API}/api/account/withdraw`, {
-        method: "POST",
-        headers: {
-          token: await AsyncStorage.getItem("token"),
-          "Content-Type": "application/json;charset=utf-8"
-        },
-        body: JSON.stringify({ Quantity: this.state.Quantity, ekNo: accountId })
-      });
-      const json = await response.json();
-      await this.props.fetchToggle();
-      alert(json.message);
-    } catch (err) {
-      alert(err);
-    }
-  };
   render() {
     const { children } = this.props;
     return (
@@ -166,7 +113,7 @@ export default class GmailStyleSwipeableRow extends Component {
             />
             <Button
               title="Get Money"
-              onPress={() => this._getMoney(this.props.deneme.EkNo)}
+              onPress={() => this._getMoney(children.props.item.EkNo)}
             />
             <Button title="Hide modal" onPress={this.toggleWithDrawn} />
           </View>
@@ -189,21 +136,18 @@ export default class GmailStyleSwipeableRow extends Component {
             />
             <Button
               title="Add Money"
-              onPress={() => this._putMoney(this.props.deneme.EkNo)}
+              onPress={() => this._putMoney(children.props.item.EkNo)}
             />
             <Button title="Hide modal" onPress={this.togglePutMoney} />
           </View>
         </Modal>
-        <Swipeable
-          ref={this.updateRef}
-          friction={2}
-          leftThreshold={80}
-          rightThreshold={40}
+        <GmailStyleSwipeableRow
+          updateRef={this.updateRef}
           renderLeftActions={this.renderLeftActions}
           renderRightActions={this.renderRightActions}
         >
           {children}
-        </Swipeable>
+        </GmailStyleSwipeableRow>
       </View>
     );
   }

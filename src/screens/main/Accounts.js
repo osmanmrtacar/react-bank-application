@@ -12,32 +12,9 @@ import {
 } from "react-native";
 import Modal from "react-native-modal";
 import { RectButton } from "react-native-gesture-handler";
-import GmailStyleSwipeableRow from "./GmailStyleSwipeableRow";
-const axios = require("axios");
+import AccountsSwipeable from "../../components/Accounts/accountsSwipeable";
+const services = require("../../services/accounts");
 const { API } = require("../../../config");
-
-const Row = ({ item }) => (
-  <View style={styles.rectButton}>
-    <Text style={styles.fromText}>{item.from}</Text>
-    <Text numberOfLines={2} style={styles.messageText}>
-      {"" + item.CustomerID + "-" + item.EkNo}
-    </Text>
-    <Text numberOfLines={2} style={styles.messageText}>
-      {"Quantity " + item.Quantity}
-    </Text>
-    <Text style={styles.dateText}>
-      {item.when} {"❭"}
-    </Text>
-  </View>
-);
-
-const SwipeableRow = ({ updateRender, item, index }) => {
-  return (
-    <GmailStyleSwipeableRow deneme={item} fetchToggle={updateRender}>
-      <Row item={item} />
-    </GmailStyleSwipeableRow>
-  );
-};
 
 export default class Accounts extends React.Component {
   constructor(props) {
@@ -49,77 +26,14 @@ export default class Accounts extends React.Component {
     this.setState({ isModalVisible: !this.state.isModalVisible });
   };
 
-  _addAccount = async () => {
-    try {
-      await fetch(`${API}/api/account/newAccount`, {
-        method: "POST",
-        headers: {
-          token: await AsyncStorage.getItem("token"),
-          "Content-Type": "application/json;charset=utf-8"
-        },
-        body: JSON.stringify({ Quantity: this.state.Quantity })
-      });
-      await this._reRender();
-    } catch (err) {
-      alert(err);
-    }
-  };
-
-  _reRender = async () => {
-    const options2 = {
-      method: "GET",
-      headers: {
-        token: await AsyncStorage.getItem("token"),
-        "Content-Type": "application/json;charset=utf-8"
-      },
-      url: `${API}/api/account`
-    };
-    try {
-      const response2 = await axios(options2);
-
-      this.setState({
-        dataSource: response2.data[0]
-      });
-    } catch (error) {
-      alert("error");
-    }
-  };
-
   async componentDidMount() {
-    await this._reRender();
-    this.setState({ isLoading: false });
-  }
-  componentDidUpdate(prevprops, prevstate) {
-    if (prevstate.fetchToggle !== this.state.fetchToggle) {
-      this.updateNews();
-    }
+    const response = await services.fetchAccounts();
+    this.setState({
+      dataSource: response,
+      isLoading: false
+    });
   }
 
-  fetchToggle = () => {
-    this.setState({
-      fetchToggle: !this.state.fetchToggle
-    });
-  };
-  renderLeftActions = (progress, dragX) => {
-    const trans = dragX.interpolate({
-      inputRange: [0, 50, 100, 101],
-      outputRange: [-20, 0, 0, 1]
-    });
-    return (
-      <RectButton style={styles.leftAction} onPress={this.close}>
-        <Animated.Text
-          style={[
-            styles.actionText,
-            {
-              transform: [{ translateX: trans }]
-            }
-          ]}
-        >
-          Archive
-        </Animated.Text>
-      </RectButton>
-    );
-  };
   render() {
     if (this.state.isLoading) {
       return (
@@ -148,7 +62,7 @@ export default class Accounts extends React.Component {
               style={styles.input}
               keyboardType={"decimal-pad"}
             />
-            <Button title="Add Account" onPress={this._addAccount} />
+            <Button title="Add Account" onPress={()=> services.addAccount(this.state.Quantity)} />
             <Button title="Hide modal" onPress={this.toggleModal} />
           </View>
         </Modal>
@@ -158,7 +72,7 @@ export default class Accounts extends React.Component {
           data={this.state.dataSource}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           renderItem={({ item, index }) => (
-            <SwipeableRow
+            <AccountsSwipeable
               updateRender={this._reRender}
               item={item}
               index={index}

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {SafeAreaView, View, FlatList, StyleSheet, Text} from 'react-native';
+import {SafeAreaView, View, FlatList, StyleSheet, Text, ActivityIndicator} from 'react-native';
 const axios = require('axios');
 export default class Transfer extends Component {
   constructor(props) {
@@ -9,7 +9,7 @@ export default class Transfer extends Component {
 
   componentDidMount() {
     axios
-      .get(`https://jsonplaceholder.typicode.com/posts`, user)
+      .get(`https://jsonplaceholder.typicode.com/posts`)
       .then(response => {
         if (response) {
           this.setState({
@@ -39,7 +39,7 @@ export default class Transfer extends Component {
       <View style={{flex: 1, paddingTop: 20}}>
         <FlatList
           data={this.state.dataSource}
-          renderItem={({item}) => <Item>{item.firt_name}</Item>}
+          renderItem={({item}) => <Text>{item.firt_name}</Text>}
           keyExtractor={({id}, index) => id}
         />
       </View>
