@@ -1,37 +1,40 @@
 import React from "react";
-import {
-  FlatList,
-  ActivityIndicator,
-  Text,
-  TextInput,
-  View,
-  StyleSheet,
-  Button,
-  Animated,
-  AsyncStorage
-} from "react-native";
-import Modal from "react-native-modal";
-import { RectButton } from "react-native-gesture-handler";
-import AccountsSwipeable from "../../components/Accounts/accountsSwipeable";
+import { FlatList, ActivityIndicator, View, StyleSheet } from "react-native";
+import { withNavigationFocus } from "react-navigation";
+import { ListItem, Button, ThemeProvider } from "react-native-elements";
 const services = require("../../services/accounts");
-const { API } = require("../../../config");
-
-export default class Accounts extends React.Component {
+import AddModal from "../../components/Accounts/addAccountModal";
+import SwipeableRow from "../../components/Accounts/swipeableRow";
+class Accounts extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { isLoading: true, isModalVisible: false, Quantity: "" };
+    this.state = {
+      isLoading: true,
+      isModalVisible: false,
+      Quantity: "",
+      isSendingRequest: false
+    };
   }
 
   toggleModal = () => {
     this.setState({ isModalVisible: !this.state.isModalVisible });
   };
+  keyExtractor = (item, index) => item.EkNo.toString();
 
   async componentDidMount() {
-    const response = await services.fetchAccounts();
+    await this._reRender();
     this.setState({
-      dataSource: response,
       isLoading: false
     });
+  }
+
+  async componentDidUpdate(prevProps, prevState) {
+    const response = await services.fetchAccounts();
+    if (prevProps.isFocused !== this.props.isFocused) {
+      if (JSON.stringify(response) != JSON.stringify(prevState.dataSource)) {
+        this.setState({ dataSource: response });
+      }
+    }
   }
 
   render() {
@@ -44,83 +47,46 @@ export default class Accounts extends React.Component {
     }
 
     return (
-      <View>
-        <Button title="New Account" onPress={this.toggleModal} />
-        <Modal isVisible={this.state.isModalVisible}>
-          <View
-            style={{
-              flex: 0,
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "#ecf0f1"
-            }}
-          >
-            <TextInput
-              value={this.state.identifier}
-              onChangeText={Quantity => this.setState({ Quantity })}
-              placeholder={"Quantity"}
-              style={styles.input}
-              keyboardType={"decimal-pad"}
-            />
-            <Button title="Add Account" onPress={()=> services.addAccount(this.state.Quantity)} />
-            <Button title="Hide modal" onPress={this.toggleModal} />
-          </View>
-        </Modal>
+      <View style={{ flex: 1, paddingTop: 40 }}>
+        <Button title="New Account!" onPress={this.toggleModal} />
 
         <FlatList
           extraData={this.state}
+          keyExtractor={this.keyExtractor}
           data={this.state.dataSource}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
-          renderItem={({ item, index }) => (
-            <AccountsSwipeable
-              updateRender={this._reRender}
-              item={item}
-              index={index}
-            />
+          renderItem={({ item }) => (
+            <SwipeableRow item={item} refreshList={this._reRender} />
           )}
-          keyExtractor={(item, index) => `message ${index}`}
+        />
+        <AddModal
+          isVisible={this.state.isModalVisible}
+          toggle={this.toggleModal}
+          sendingRequest={this.state.isSendingRequest}
+          requestFunc={this._addAccount}
         />
       </View>
     );
   }
+  _reRender = async () => {
+    try {
+      const response = await services.fetchAccounts();
+      this.setState({
+        dataSource: response
+      });
+    } catch (error) {
+      alert(error);
+    }
+  };
+  _addAccount = async quantity => {
+    try {
+      this.setState({ isSendingRequest: true });
+      await services.addAccount(quantity);
+      this._reRender();
+      this.setState({ isSendingRequest: false });
+    } catch (err) {
+      alert(err);
+    }
+  };
 }
 
-const styles = StyleSheet.create({
-  rectButton: {
-    flex: 1,
-    height: 80,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    justifyContent: "space-between",
-    flexDirection: "column",
-    backgroundColor: "white"
-  },
-  input: {
-    width: 200,
-    height: 44,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: "black",
-    marginBottom: 10
-  },
-  separator: {
-    backgroundColor: "rgb(200, 199, 204)",
-    height: StyleSheet.hairlineWidth
-  },
-  fromText: {
-    fontWeight: "bold",
-    backgroundColor: "transparent"
-  },
-  messageText: {
-    color: "#999",
-    backgroundColor: "transparent"
-  },
-  dateText: {
-    backgroundColor: "transparent",
-    position: "absolute",
-    right: 20,
-    top: 10,
-    color: "#999",
-    fontWeight: "bold"
-  }
-});
+export default withNavigationFocus(Accounts);

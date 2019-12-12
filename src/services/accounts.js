@@ -1,6 +1,7 @@
 const { API } = require("../../config");
 const axios = require("axios");
 import { AsyncStorage } from "react-native";
+
 const fetchAccounts = async () => {
   const options = {
     method: "GET",
@@ -36,7 +37,7 @@ const addAccount = async quantity => {
   }
 };
 
-const getMoney = async accountId => {
+exports.getMoney = async (qty, accSuffix) => {
   try {
     const response = await fetch(`${API}/api/account/withdraw`, {
       method: "POST",
@@ -44,17 +45,16 @@ const getMoney = async accountId => {
         token: await AsyncStorage.getItem("token"),
         "Content-Type": "application/json;charset=utf-8"
       },
-      body: JSON.stringify({ Quantity: this.state.Quantity, ekNo: accountId })
+      body: JSON.stringify({ Quantity: qty, ekNo: accSuffix })
     });
     const json = await response.json();
-    await this.props.fetchToggle();
-    alert(json.message);
+    return json.message;
   } catch (err) {
     alert(err);
   }
 };
 
-const putMoney = async accountId => {
+exports.putMoney = async (qty, accSuffix) => {
   try {
     const response = await fetch(`${API}/api/account/selectAccount`, {
       method: "POST",
@@ -62,17 +62,16 @@ const putMoney = async accountId => {
         token: await AsyncStorage.getItem("token"),
         "Content-Type": "application/json;charset=utf-8"
       },
-      body: JSON.stringify({ Quantity: this.state.Quantity, ekNo: accountId })
+      body: JSON.stringify({ Quantity: qty, ekNo: accSuffix })
     });
     const json = await response.json();
-    this.props.fetchToggle();
-    alert(json.message);
+    return json.message;
   } catch (err) {
     alert(err);
   }
 };
 
-_deleteAccount = async accountId => {
+exports.deleteAccount = async accountId => {
   try {
     const response = await fetch(`${API}/api/account/deleteAccount`, {
       method: "POST",
@@ -83,8 +82,7 @@ _deleteAccount = async accountId => {
       body: JSON.stringify({ ekNo: accountId })
     });
     const json = await response.json();
-    await this.props.fetchToggle();
-    alert(json.message);
+    return json.message;
   } catch (err) {
     alert(err);
   }

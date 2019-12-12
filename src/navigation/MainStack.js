@@ -1,9 +1,9 @@
 import Accounts from "../screens/main/Accounts";
 import Transfers from "../screens/main/Transfer";
 
-import { createStackNavigator } from 'react-navigation-stack';
+import { createBottomTabNavigator } from 'react-navigation-tabs';
 
-export default createStackNavigator({
+export default createBottomTabNavigator({
   Account: Accounts,
   Transfer: Transfers
 });

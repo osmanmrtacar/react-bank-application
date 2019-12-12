@@ -4,13 +4,12 @@ import {
   Text,
   TextInput,
   View,
-  Button,
   Alert,
   ActivityIndicator,
   StyleSheet,
   AsyncStorage
 } from "react-native";
-
+import { Input, ThemeProvider, Button } from "react-native-elements";
 const axios = require("axios");
 const { API } = require("../../../config");
 
@@ -33,22 +32,17 @@ export default class LoginScreen extends Component {
     try {
       const response = await axios.post(`${API}/login`, user);
       if (response.data.status == true) {
-        try {
-          await AsyncStorage.setItem("token", response.data.token);
-        } catch (error) {
-          console.log(error)
-        }
+        await AsyncStorage.setItem("token", response.data.token);
+        this.setState({ isLoggingIn: false });
         this.props.navigation.navigate("App");
-      }
-      else{
+      } else {
+        this.setState({ isLoggingIn: false });
         this.setState({ message: response.data.message });
       }
     } catch (error) {
       this.setState({ message: error.message });
       this.setState({ isLoggingIn: false });
     }
-
-    var proceed = false;
   };
 
   clearUsername = () => {
@@ -68,19 +62,19 @@ export default class LoginScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <TextInput
+        <Input
           value={this.state.identifier}
           onChangeText={identifier => this.setState({ identifier })}
           placeholder={"ID"}
-          style={styles.input}
           keyboardType={"number-pad"}
+          maxLength={11}
         />
-        <TextInput
+        <Input
           value={this.state.password}
           onChangeText={password => this.setState({ password })}
           placeholder={"Password"}
           secureTextEntry={true}
-          style={styles.input}
+          maxLength={6}
         />
         {!!this.state.message && (
           <Text style={{ fontSize: 14, color: "red", padding: 5 }}>
@@ -89,13 +83,21 @@ export default class LoginScreen extends Component {
         )}
         <Button
           title={"Login"}
-          style={styles.input}
           onPress={this._userLogin}
+          loading={this.state.isLoggingIn}
+          disabled={
+            this.state.identifier.length != 11 ||
+            this.state.password.length != 6 ||
+            this.state.isLoggingIn
+          }
+          buttonStyle={styles.input}
         />
         <Button
           title={"Register"}
-          style={styles.input}
           onPress={this._switchScreen}
+          loading={this.state.isLoggingIn}
+          disabled={this.state.isLoggingIn}
+          buttonStyle={styles.input}
         />
       </View>
     );
@@ -106,15 +108,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#ecf0f1"
+    justifyContent: "center"
   },
   input: {
     width: 200,
     height: 44,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: "black",
-    marginBottom: 10
+    marginTop: 30
   }
 });

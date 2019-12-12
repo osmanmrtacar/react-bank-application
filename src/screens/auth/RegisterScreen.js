@@ -72,18 +72,21 @@ export default class RegisterScreen extends Component {
           placeholder={"ID"}
           keyboardType={"number-pad"}
           style={styles.input}
+          maxLength={11}
         />
         <TextInput
           value={this.state.first_name}
           onChangeText={fname => this.setState({ fname })}
           placeholder={"First Name"}
           style={styles.input}
+          maxLength={20}
         />
         <TextInput
           value={this.state.last_name}
           onChangeText={lname => this.setState({ lname })}
           placeholder={"Last Name"}
           style={styles.input}
+          maxLength={20}
         />
         <TextInput
           value={this.state.phone_number}
@@ -91,6 +94,7 @@ export default class RegisterScreen extends Component {
           placeholder={"Phone Number"}
           style={styles.input}
           keyboardType={"phone-pad"}
+          maxLength={11}
         />
         <TextInput
           value={this.state.email}
@@ -98,6 +102,7 @@ export default class RegisterScreen extends Component {
           placeholder={"E-Mail"}
           style={styles.input}
           keyboardType={"email-address"}
+          maxLength={20}
         />
         <TextInput
           value={this.state.password}
@@ -105,6 +110,7 @@ export default class RegisterScreen extends Component {
           placeholder={"Password"}
           secureTextEntry={true}
           style={styles.input}
+          maxLength={6}
         />
         {!!this.state.message && (
           <Text style={{ fontSize: 14, color: "red", padding: 5 }}>
@@ -115,6 +121,7 @@ export default class RegisterScreen extends Component {
           title={"Register"}
           style={styles.input}
           onPress={this._userRegister}
+          disabled={this.state.ID.length!=11||this.state.password.length!=6}
         />
       </View>
     );
