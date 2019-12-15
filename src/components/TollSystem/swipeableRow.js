@@ -1,11 +1,11 @@
 import { ListItem, Overlay, Button, Input } from "react-native-elements";
 import React from "react";
-import { Animated, StyleSheet, I18nManager, View, Alert } from "react-native";
+import { Animated, StyleSheet, I18nManager, View } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import Icon from "react-native-vector-icons/MaterialIcons";
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
-const services = require("../../services/accounts");
+const services = require("../../services/tollservice");
 
 export default class SwipeableRow extends React.Component {
   constructor(props) {
@@ -131,9 +131,8 @@ export default class SwipeableRow extends React.Component {
           onSwipeableRightOpen={this._deleteAccount}
         >
           <ListItem
-            title={"" + item.CustomerID + "-" + item.EkNo}
-            subtitle={"Balance: " + item.Quantity}
-            leftAvatar={{ source: { uri: item.avatar_url } }}
+            title={"" + item.HgsID + "-" + item.HgsEkNo}
+            subtitle={"Quantity: " + item.Quantity}
             bottomDivider
           />
         </Swipeable>

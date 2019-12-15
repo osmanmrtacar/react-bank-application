@@ -1,22 +1,22 @@
 import RNPickerSelect from "react-native-picker-select";
 import React from "react";
 import { StyleSheet } from "react-native";
-export default Dropdown = ({ items, pickAccount, myValue }) => {
+export default HaveHouse = ({ onChange }) => {
   return (
     <RNPickerSelect
-      value={myValue}
-      onValueChange={value => pickAccount(value)}
-      items={items.map(mapArray)}
+      placeholder={{
+        label: "YES/NO",
+        value: null,
+        color: "red"
+      }}
+      onValueChange={onChange}
+      items={[
+        { label: "Yes", value: 1 },
+        { label: "No", value: 2 }
+      ]}
       style={pickerSelectStyles}
     />
   );
-};
-
-const mapArray = x => {
-  return {
-    label: `${x.CustomerID}-${x.EkNo}\t Balance: ${x.Quantity}`,
-    value: `${x.EkNo}`
-  };
 };
 
 const pickerSelectStyles = StyleSheet.create({

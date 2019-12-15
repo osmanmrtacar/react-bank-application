@@ -6,7 +6,8 @@ import {
   TextInput,
   Picker,
   StyleSheet,
-  ActivityIndicator
+  ActivityIndicator,
+  ScrollView
 } from "react-native";
 const axios = require("axios");
 const accountService = require("../../services/accounts");
@@ -102,7 +103,7 @@ class Transfer extends Component {
       );
     }
     await this._render();
-    this.setState({ selectedAccount: "", isSendingRequest: false });
+    this.setState({ selectedAccount: "", selectedOption: "", isSendingRequest: false, Receiver_Suffix: "" });
     alert(response);
     this.props.navigation.navigate("Accounts", {
       accountsData: this.state.dataSource
@@ -150,41 +151,43 @@ class Transfer extends Component {
       );
     }
     return (
-      <View style={{ flex: 1, paddingTop: 50 }}>
-        <Text style={{ paddingBottom: 15 }}>FROM</Text>
-        <Dropdown
-          myValue={this.state.selectedAccount}
-          pickAccount={this.setAccount}
-          items={this.state.dataSource}
-        />
-        <Text style={{ paddingVertical: 15 }}>Quantity</Text>
-        <TextInput
-          value={this.state.Quantity}
-          onChangeText={qty => this.setState({ Quantity: qty })}
-          placeholder={"Quantity"}
-          style={styles.input}
-          maxLength={6}
-          keyboardType={"decimal-pad"}
-        />
-        <Text style={{ paddingVertical: 15 }}>Transfer To</Text>
-        <TransferOption
-          disabled={this.state.selectedAccount == ""}
-          render={this._toggleSelected}
-        />
-        <View paddingVertical={15} />
-        {this._renderSelectedOption()}
-        <View paddingVertical={15} />
-        <Button
-          disabled={
-            this.state.selectedAccount == null ||
-            this.state.Quantity == "" ||
-            this.state.Receiver_Suffix == "" ||
-            this.state.isSendingRequest
-          }
-          loading={this.state.isSendingRequest}
-          title={"Send"}
-          onPress={this._onPress}
-        />
+      <View style={styles.container}>
+        <ScrollView style={styles.scrollContainer}>
+          <Text style={{ paddingBottom: 15 }}>FROM</Text>
+          <Dropdown
+            myValue={this.state.selectedAccount}
+            pickAccount={this.setAccount}
+            items={this.state.dataSource}
+          />
+          <Text style={{ paddingVertical: 15 }}>Quantity</Text>
+          <TextInput
+            value={this.state.Quantity}
+            onChangeText={qty => this.setState({ Quantity: qty })}
+            placeholder={"Quantity"}
+            style={styles.input}
+            maxLength={6}
+            keyboardType={"decimal-pad"}
+          />
+          <Text style={{ paddingVertical: 15 }}>Transfer To</Text>
+          <TransferOption
+            disabled={this.state.selectedAccount == ""}
+            render={this._toggleSelected}
+          />
+          <View paddingVertical={15} />
+          {this._renderSelectedOption()}
+          <View paddingVertical={15} />
+          <Button
+            disabled={
+              this.state.selectedAccount == null ||
+              this.state.Quantity == "" ||
+              this.state.Receiver_Suffix == "" ||
+              this.state.isSendingRequest
+            }
+            loading={this.state.isSendingRequest}
+            title={"Send"}
+            onPress={this._onPress}
+          />
+        </ScrollView>
       </View>
     );
   }
@@ -192,10 +195,15 @@ class Transfer extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 50,
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#ecf0f1"
+  },
+  scrollContainer: {
+    flex: 1,
+    width: "95%"
   },
   input: {
     width: "100%",

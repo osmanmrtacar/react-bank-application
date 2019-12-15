@@ -1,9 +1,12 @@
 import Accounts from "../screens/main/Accounts";
 import Transfers from "../screens/main/Transfer";
-
-import { createBottomTabNavigator } from 'react-navigation-tabs';
+import TollSystem from "../screens/main/TollSystem";
+import LoanScreen from '../screens/main/Loan'
+import { createBottomTabNavigator } from "react-navigation-tabs";
 
 export default createBottomTabNavigator({
   Account: Accounts,
-  Transfer: Transfers
+  Transfer: Transfers,
+  HGS: TollSystem,
+  Loan: LoanScreen
 });
