@@ -26,9 +26,9 @@ class Transfer extends Component {
       isSendingRequest: false,
       Quantity: "",
       user: "",
-      selectedAccount: "",
+      selectedAccount: null,
       render: false,
-      selectedOption: "",
+      selectedOption: null,
       Receiver_Customer: "",
       Receiver_Suffix: ""
     };
@@ -103,7 +103,12 @@ class Transfer extends Component {
       );
     }
     await this._render();
-    this.setState({ selectedAccount: "", selectedOption: "", isSendingRequest: false, Receiver_Suffix: "" });
+    this.setState({
+      selectedAccount: null,
+      selectedOption: null,
+      isSendingRequest: false,
+      Receiver_Suffix: ""
+    });
     alert(response);
     this.props.navigation.navigate("Accounts", {
       accountsData: this.state.dataSource
@@ -111,7 +116,7 @@ class Transfer extends Component {
   };
 
   _renderSelectedOption = () => {
-    if (this.state.selectedOption == "") return null;
+    if (this.state.selectedOption == null) return null;
     if (this.state.selectedOption == "myself") {
       return (
         <ToMyAccounts
@@ -170,7 +175,8 @@ class Transfer extends Component {
           />
           <Text style={{ paddingVertical: 15 }}>Transfer To</Text>
           <TransferOption
-            disabled={this.state.selectedAccount == ""}
+            myValue={this.state.selectedOption}
+            disabled={this.state.selectedAccount == null}
             render={this._toggleSelected}
           />
           <View paddingVertical={15} />

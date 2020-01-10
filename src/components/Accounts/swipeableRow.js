@@ -100,6 +100,7 @@ export default class SwipeableRow extends React.Component {
               placeholder="Quantity"
               onChangeText={qty => this.setState({ Quantity: qty })}
               inputStyle={styles.input}
+              maxLength={4}
               keyboardType={"decimal-pad"}
             />
             <Button

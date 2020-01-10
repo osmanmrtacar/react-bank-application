@@ -1,7 +1,7 @@
 import RNPickerSelect from "react-native-picker-select";
 import React from "react";
 import { StyleSheet } from "react-native";
-export default ToMyAccounts = ({ items, toggleSuffix }) => {
+export default ToMyAccounts = ({ items, toggleSuffix, myValue }) => {
   return (
     <RNPickerSelect
       placeholder={{
@@ -9,6 +9,7 @@ export default ToMyAccounts = ({ items, toggleSuffix }) => {
         value: null,
         color: "red"
       }}
+      value={myValue}
       onValueChange={toggleSuffix}
       items={items.map(mapArray)}
       style={pickerSelectStyles}

@@ -4,12 +4,13 @@ import {
   Text,
   TextInput,
   View,
-  Button,
   Alert,
   ActivityIndicator,
   StyleSheet,
   AsyncStorage
 } from "react-native";
+import { Button } from "react-native-elements";
+import Input from "../../components/Input";
 import { identifier } from "@babel/types";
 const axios = require("axios");
 const { API } = require("../../../config");
@@ -23,7 +24,8 @@ export default class RegisterScreen extends Component {
     pnumber: "",
     password: "",
     isLoggingIn: false,
-    message: ""
+    message: "",
+    isValid: true
   };
 
   _userRegister = async () => {
@@ -41,9 +43,10 @@ export default class RegisterScreen extends Component {
     try {
       const response = await axios.post(`${API}/register`, user);
       if (response.data.status == 200) {
-        this.setState({ message: "Success" });
-        setTimeout(1100);
-        this.props.navigation.navigate("SignIn");
+        this.setState({ message: "Success", isLoggingIn: false });
+        setTimeout(() => {
+          this.props.navigation.navigate("SignIn");
+        }, 1100);
       } else {
         this.setState({ message: response.data.message });
       }
@@ -63,27 +66,40 @@ export default class RegisterScreen extends Component {
     this.setState({ message: "" });
   };
 
+  _checkName = value => {
+    console.log(/^[a-z]*$/i.test(value));
+    if (/^[a-z]*$/i.test(value)) {
+      this.setState({ fname: value });
+    }
+  };
+
+  _checkSurname = value => {
+    if (/^[a-z]*$/i.test(value)) {
+      this.setState({ lname: value });
+    }
+  };
+
   render() {
     return (
       <View style={styles.container}>
         <TextInput
           value={this.state.ID}
           onChangeText={ID => this.setState({ ID })}
-          placeholder={"ID"}
+          placeholder={"TC"}
           keyboardType={"number-pad"}
           style={styles.input}
           maxLength={11}
         />
         <TextInput
-          value={this.state.first_name}
-          onChangeText={fname => this.setState({ fname })}
+          value={this.state.fname}
+          onChangeText={this._checkName}
           placeholder={"First Name"}
           style={styles.input}
           maxLength={20}
         />
         <TextInput
-          value={this.state.last_name}
-          onChangeText={lname => this.setState({ lname })}
+          value={this.state.lname}
+          onChangeText={this._checkSurname}
           placeholder={"Last Name"}
           style={styles.input}
           maxLength={20}
@@ -119,9 +135,12 @@ export default class RegisterScreen extends Component {
         )}
         <Button
           title={"Register"}
-          style={styles.input}
           onPress={this._userRegister}
-          disabled={this.state.ID.length!=11||this.state.password.length!=6}
+          disabled={
+            this.state.ID.length != 11 ||
+            this.state.password.length != 6 ||
+            this.state.isLoggingIn
+          }
         />
       </View>
     );

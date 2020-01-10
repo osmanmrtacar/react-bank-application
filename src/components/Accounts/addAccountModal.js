@@ -17,6 +17,7 @@ const addAccountModal = props => {
           placeholder="Quantity"
           onChangeText={qty => setQuantity(qty)}
           inputStyle={styles.input}
+          maxLength={4}
           keyboardType={"decimal-pad"}
         />
         <Button

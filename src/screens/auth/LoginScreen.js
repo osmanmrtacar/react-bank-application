@@ -65,7 +65,7 @@ export default class LoginScreen extends Component {
         <Input
           value={this.state.identifier}
           onChangeText={identifier => this.setState({ identifier })}
-          placeholder={"ID"}
+          placeholder={"TC"}
           keyboardType={"number-pad"}
           maxLength={11}
         />

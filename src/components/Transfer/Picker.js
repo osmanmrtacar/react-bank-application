@@ -5,7 +5,7 @@ export default Dropdown = ({ items, pickAccount, myValue }) => {
   return (
     <RNPickerSelect
       value={myValue}
-      onValueChange={value => pickAccount(value)}
+      onValueChange={pickAccount}
       items={items.map(mapArray)}
       style={pickerSelectStyles}
     />

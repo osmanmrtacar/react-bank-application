@@ -24,8 +24,8 @@ class Loan extends Component {
       Quantity: "",
       age: "",
       loanBeforeCount: "",
-      doesHavePhone: 0,
-      doesHaveHouse: 0
+      doesHavePhone: null,
+      doesHaveHouse: null
     };
   }
 
@@ -111,9 +111,9 @@ class Loan extends Component {
             disabled={
               this.state.age == "" ||
               this.state.isValid ||
-              !(this.state.Quantity > 0) ||
-              this.state.doesHaveHouse == 0 ||
-              this.state.doesHavePhone == 0 ||
+              !(this.state.Quantity > 999) ||
+              this.state.doesHaveHouse == null ||
+              this.state.doesHavePhone == null ||
               this.state.loanBeforeCount == "" ||
               this.state.isSendingRequest
             }

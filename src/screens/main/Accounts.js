@@ -19,6 +19,7 @@ class Accounts extends React.Component {
   toggleModal = () => {
     this.setState({ isModalVisible: !this.state.isModalVisible });
   };
+  
   keyExtractor = (item, index) => item.EkNo.toString();
 
   async componentDidMount() {
